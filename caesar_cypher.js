@@ -13,83 +13,77 @@ según lo visto en la sesión de Clean Code
 */
 
 (() => {
-  const ALPHABET_LENGTH = 26;
-  const LETTERS = {
-    A: 65,
-    Z: 90,
-    a: 97,
-    z: 122,
-  };
+    const ALPHABET_LENGTH = 26;
+    const LETTERS = { A: 65, Z: 90, a: 97, z: 122 };
 
-  const upperLimitGroup = [LETTERS.A, LETTERS.a];
-  const lowerLimitGroup = [LETTERS.Z, LETTERS.z];
+    const upperLimitGroup = [LETTERS.A, LETTERS.a];
+    const lowerLimitGroup = [LETTERS.Z, LETTERS.z];
 
-  function checkLimits(char, shift, upperLimit, lowerLimit) {
-    return (
-      char >= upperLimit &&
-      char <= lowerLimit &&
-      (char + shift > lowerLimit || char + shift < upperLimit)
-    );
-  }
-
-  function isCharOutOfRange(char, shift) {
-    let validChar = false;
-      for (let i = 0; i < upperLimitGroup.length; i++) {
-        validChar = validChar || checkLimits(char, shift, upperLimitGroup[i], lowerLimitGroup[i],
-      );
+    //
+    // Validation Function;
+    function checkLimits(char, shift, upperLimit, lowerLimit) {
+        return (char >= upperLimit && char <= lowerLimit && (char + shift > lowerLimit || char + shift < upperLimit));
     }
-    return validChar;
-  }
 
-  function moduleCalc(shift) {
-    return shift % ALPHABET_LENGTH;
-  }
-
-  function applyShift(char, shift) {
-    let shiftToApply = shift;
-    if(isCharOutOfRange(char, shift)) {
-      shiftToApply = shift > 0 ? shift - ALPHABET_LENGTH : shift + ALPHABET_LENGTH;
+    function isCharOutOfRange(char, shift) {
+        let validChar = false;
+        for (let i = 0; i < upperLimitGroup.length; i++) {
+            validChar = validChar || checkLimits(char, shift, upperLimitGroup[i], lowerLimitGroup[i]);
+        }
+        return validChar;
     }
-    return shiftToApply
-  }
 
-  function cipher(text, shift) {
-    let cipher = [];
-    shift = moduleCalc(shift);
-
-    for (let i = 0; i < text.length; i++) {
-      const currentChar = text.charCodeAt(i)
-      const shiftToApply = applyShift(currentChar, shift);
-      cipher.push(String.fromCharCode(currentChar + shiftToApply));
+    function moduleCalc(shift) {
+        return shift % ALPHABET_LENGTH;
     }
-    return cipher.join("");
-  }
 
-  function decipher(text, shift) {
-    return cipher(text, -shift);
-  }
-  
-  // end refactor
+    function applyShift(char, shift) {
+        let shiftToApply = shift;
+        if (isCharOutOfRange(char, shift)) {
+            shiftToApply = shift > 0 ? shift - ALPHABET_LENGTH : shift + ALPHABET_LENGTH;
+        }
+        return shiftToApply;
+    }
+    //
 
+    //
+    // Cipher function;
+    function cipher(text, shift) {
+        let cipher = [];
+        shift = moduleCalc(shift);
 
-  // CHECK VISUAL TEST
-  let continueWhile = true
-  alert("Welcome to the caesar cypher!")
+        for (let i = 0; i < text.length; i++) {
+        const currentChar = text.charCodeAt(i);
+        const shiftToApply = applyShift(currentChar, shift);
+        cipher.push(String.fromCharCode(currentChar + shiftToApply));
+        }
+        return cipher.join("");
+    }
 
-  while(continueWhile) {
+    function decipher(text, shift) {
+        return cipher(text, -shift);
+    }
+    // end refactor
+
     
-    let text = prompt("Choise a word to cypher")
-    let shift = parseInt(prompt("Choise a key for your cypher"));
-    const textCipher = cipher(text, shift)
-    
-    const textToCipher = textCipher;
-    const textToDecipher = decipher(textCipher, shift);
-    alert(`CIPHER: ${textToCipher} === ${textCipher}`);
-    alert(`DECIPHER: ${textToDecipher} === ${text}`);
+    // CHECK VISUAL TEST (open index.html)
+    let continueWhile = true;
+    alert("Welcome to the caesar cypher!");
 
-    continueWhile = confirm("Do you want to repeat??")
+    while (continueWhile) {
+        let text = prompt("Choise a word to cypher...");
+        let shift = parseInt(prompt("Choise a key for your cypher..."));
+        const textCipher = cipher(text, shift);
 
-    console.assert(textToCipher === textCipher, `${textToCipher} === ${textCipher}`);
-    console.assert(textToDecipher === text, `${textToDecipher} === ${text}`);
-  }
+        const textToCipher = textCipher;
+        const textToDecipher = decipher(textCipher, shift);
+
+        alert(`CIPHER: ${textToCipher} === ${textCipher}`);
+        alert(`DECIPHER: ${textToDecipher} === ${text}`);
+
+        continueWhile = confirm("Do you want to repeat??");
+
+        console.assert(textToCipher === textCipher, `${textToCipher} === ${textCipher}`);
+        console.assert(textToDecipher === text, `${textToDecipher} === ${text}`);
+    }
 })();
