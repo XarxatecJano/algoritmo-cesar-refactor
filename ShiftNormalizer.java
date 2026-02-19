@@ -1,5 +1,3 @@
-
-
 public final class ShiftNormalizer {
 
     private final int modulus;

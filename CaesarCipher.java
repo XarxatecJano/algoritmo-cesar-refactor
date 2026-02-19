@@ -44,13 +44,15 @@ public class CaesarCipher {
         String result1 = cipher.cipher("Hello World", 1);
         String expected1 = "Ifmmp!Xpsme";
         assert result1.equals(expected1);
+        System.out.println("Funcionó el primer caso");
 
         String ciphered = cipher.cipher("Hello World", 3);
         String result2 = cipher.decipher(ciphered, 3);
         String expected2 = "Hello World";
         assert result2.equals(expected2);
 
-        System.out.println("Funcionó!!!");
+        System.out.println("Funcionó el segundo caso");
+        System.out.println("Funcionó todo!!!");
     }
     
 }
