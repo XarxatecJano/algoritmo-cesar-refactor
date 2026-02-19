@@ -12,55 +12,70 @@ Tu tarea consiste en entender el código y refactorizarlo para que sea lo más l
 según lo visto en la sesión de Clean Code
 */
 
-const ALPHABET_LENGTH = 26;
-const LETTERS = {A: 65, Z: 90, a:97 ,z:122}
+(() => {
+  const ALPHABET_LENGTH = 26;
+  const LETTERS = {
+    A: 65,
+    Z: 90,
+    a: 97,
+    z: 122,
+  };
 
-function isUpperCaseLetterOutOfRange(char, shift){
-  return char >= LETTERS.A && char <= LETTERS.Z && (char + shift > LETTERS.Z||char -shift < LETTERS.A);
-}
+  const upperLimitGroup = [LETTERS.A, LETTERS.a];
+  const lowerLimitGroup = [LETTERS.Z, LETTERS.z];
 
-function isLowerCaseOutOfRange(char, shift){
-  return char >= LETTERS.a && char <= LETTERS.z && (char + shift > LETTERS.z||char-shift < LETTERS.a);
-}
+  function checkLimits(char, shift, upperLimit, lowerLimit) {
+    return (
+      char >= upperLimit &&
+      char <= lowerLimit &&
+      (char + shift > lowerLimit || char - shift < upperLimit)
+    );
+  }
 
-function isOutOfAlphabet(char, shift){
-  return isUpperCaseLetterOutOfRange(char, shift) || isLowerCaseOutOfRange(char, shift);
-}
+  function isCharOutOfRange(char, shift) {
+    let validChar = false;
+    for (let i = 0; i < upperLimitGroup.length; i++) {
+      validChar = checkLimits(char, shift, upperLimitGroup[i], lowerLimitGroup[i],
+      );
+    }
+    return validChar;
+  }
 
+  function moduleCalc(shift) {
+    return (shift = shift % ALPHABET_LENGTH);
+  }
 
-function cipher(text, shift) {
-    let cipher = '';
-    let newCharToAddToCipher, shiftToApply, currentChar;
-    shift = shift % ALPHABET_LENGTH;
+  function applyShift(char, shift) {
+    let shiftToApply = isCharOutOfRange(char, shift) ? shift - ALPHABET_LENGTH : shift;
+    return shiftToApply
+  }
+
+  function cipher(text, shift) {
+    let cipher = "";
+    let newCharToAdd, shiftToApply, currentChar;
+
+    shift = moduleCalc(shift);
 
     for (let i = 0; i < text.length; i++) {
-      currentChar = text.charCodeAt(i);
-      shiftToApply = isOutOfAlphabet(currentChar, shift)?shift - ALPHABET_LENGTH:shift;
-      newCharToAddToCipher = String.fromCharCode(currentChar + shiftToApply);
-      cipher = cipher.concat(newCharToAddToCipher);
+      currentChar = text.charCodeAt(i)
+      shiftToApply = applyShift(currentChar, shift);
+      newCharToAdd = String.fromCharCode(currentChar + shiftToApply);
+      cipher = cipher.concat(newCharToAdd);
     }
-    return cipher;
-}
-  
-  function decipher(text, shift) {
-    var decipher = '';
-    let newCharToAddToDecipher, shiftToApply, currentChar;
-    shift = -shift % ALPHABET_LENGTH;
-    for (var i = 0; i < text.length; i++) {
-      currentChar = text.charCodeAt(i);
-      shiftToApply = isOutOfAlphabet(currentChar, shift)?shift + ALPHABET_LENGTH:shift;
-      newCharToAddToDecipher = String.fromCharCode(currentChar + shiftToApply);
-      decipher = decipher.concat(newCharToAddToDecipher);
-      
-    }
-    return decipher.toString();
+    return cipher
   }
-  
-  console.assert(
-    cipher('Hello World', 1) === 'Ifmmp!Xpsme',
-    `${cipher('Hello World', 1)} === 'Ifmmp!Xpsme'`,
-  );
-  console.assert(
-    decipher(cipher('Hello World', 3), 3) === 'Hello World',
-    `${decipher(cipher('Hello World', 3), 3)} === 'Hello World'`,
-  );
+
+  function decipher(text, shift) {
+    return cipher(text, -shift);
+  }
+
+  // CHECK TEST
+  let text = "Hello World";
+  let textCipher = "Ifmmp!Xpsme";
+  let shift = 30;
+  const textToCipher = cipher(text, shift);
+  const textToDecipher = decipher(textCipher, shift);
+
+  console.assert(textToCipher === textCipher, `${textToCipher} === ${textCipher}`);
+  console.assert(textToDecipher === text, `${textToDecipher} === ${text}`);
+})();
