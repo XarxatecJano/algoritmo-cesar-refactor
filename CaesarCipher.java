@@ -1,7 +1,7 @@
 public class CaesarCipher {
     
     private static final int ALPHABET_LENGTH = 26;
-    
+
     private static class Letters {
         static final int A_UPPERCASE = 65;
         static final int Z_UPPERCASE = 90;
@@ -40,20 +40,14 @@ public class CaesarCipher {
     }
     return result.toString();
     }
+    
     public static void main(String[] args) {
-        // Test 1
-        String result1 = cipher("Hello World", 1);
-        String expected1 = "Ifmmp!Xpsme";
-        assert result1.equals(expected1) : 
-            String.format("%s === '%s'", result1, expected1);
-        
-        // Test 2
-        String ciphered = cipher("Hello World", 3);
-        String result2 = decipher(ciphered, 3);
-        String expected2 = "Hello World";
-        assert result2.equals(expected2) : 
-            String.format("%s === '%s'", result2, expected2);
-        
-        System.out.println("Todos los tests han pasado correctamente");
+    final int SHIFT_1 = 1;
+    final int SHIFT_3 = 3;
+
+    assert cipher("Hello World", SHIFT_1).equals("Ifmmp!Xpsme") : "Test 1 failed";
+    assert decipher(cipher("Hello World", SHIFT_3), SHIFT_3).equals("Hello World") : "Test 2 failed";
+
+    System.out.println("Todos los tests han pasado correctamente");
     }
 }
