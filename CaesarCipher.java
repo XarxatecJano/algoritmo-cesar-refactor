@@ -3,25 +3,20 @@ public class CaesarCipher {
     private static final int ALPHABET_LENGTH = 26;
     
     private static class Letters {
-        static final int A = 65;
-        static final int Z = 90;
-        static final int a = 97;
-        static final int z = 122;
+        static final int A_UPPERCASE = 65;
+        static final int Z_UPPERCASE = 90;
+        static final int A_LOWERCASE = 97;
+        static final int Z_LOWERCASE = 122;
     }
     
-    private static boolean isUpperCaseLetterOutOfRange(int charCode, int shift) {
-        return charCode >= Letters.A && charCode <= Letters.Z && 
-               (charCode + shift > Letters.Z || charCode - shift < Letters.A);
-    }
-    
-    private static boolean isLowerCaseOutOfRange(int charCode, int shift) {
-        return charCode >= Letters.a && charCode <= Letters.z && 
-               (charCode + shift > Letters.z || charCode - shift < Letters.a);
+     private static boolean isOutOfRange(int charCode, int shift, int min, int max) {
+        return (charCode >= min && charCode <= max) && 
+            (charCode + shift > max || charCode - shift < min);
     }
     
     private static boolean isOutOfAlphabet(int charCode, int shift) {
-        return isUpperCaseLetterOutOfRange(charCode, shift) || 
-               isLowerCaseOutOfRange(charCode, shift);
+        return isOutOfRange(charCode, shift, Letters.A_UPPERCASE, Letters.Z_UPPERCASE) ||
+            isOutOfRange(charCode, shift, Letters.A_LOWERCASE, Letters.Z_LOWERCASE);
     }
     
     public static String cipher(String text, int shift) {
