@@ -40,21 +40,20 @@ public class CaesarCipher {
         return shiftText(text, -limitShift(shift), ALPHABET_LENGTH);
     }
 
+    private static void assertResult(String result, String expected) {
+        assert result.equals(expected) :
+            String.format("%s === '%s'", result, expected);
+    }
     
     public static void main(String[] args) {
-        // Test 1
-        String result1 = cipher("Hello World", 1);
-        String expected1 = "Ifmmp!Xpsme";
-        assert result1.equals(expected1) : 
-            String.format("%s === '%s'", result1, expected1);
-        
-        // Test 2
-        String ciphered = cipher("Hello World", 3);
-        String result2 = decipher(ciphered, 3);
-        String expected2 = "Hello World";
-        assert result2.equals(expected2) : 
-            String.format("%s === '%s'", result2, expected2);
-        
+        final int SHIFT_ONE = 1;
+        final int SHIFT_THREE = 3;
+
+        assertResult(cipher("Hello World", SHIFT_ONE), "Ifmmp!Xpsme");
+
+        String ciphered = cipher("Hello World", SHIFT_THREE);
+        assertResult(decipher(ciphered, SHIFT_THREE), "Hello World");
+
         System.out.println("Todos los tests han pasado correctamente");
     }
 }
