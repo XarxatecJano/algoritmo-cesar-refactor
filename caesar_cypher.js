@@ -1,66 +1,54 @@
-/*
-El Cifrado César es una de las técnicas de cifrado más simples y conocidas. 
-Se trata de un tipo de cifrado de sustitución en el que cada letra del texto sin cifrar es reemplazada por otra letra 
-que se encuentra un número fijo de posiciones hacia abajo en el alfabeto. 
-Por ejemplo, con un desplazamiento hacia la derecha de 3, la letra E sería reemplazada por H, 
-la F se convertiría en I, y así sucesivamente.
-Esta transformación se puede representar alineando dos alfabetos: el alfabeto cifrado es el alfabeto normal 
-rotado hacia la derecha un cierto número de posiciones.
-
-A continuación tienes dos funciones que codifican y decodifican usando el cifrado César.
-Tu tarea consiste en entender el código y refactorizarlo para que sea lo más limpio posible, 
-según lo visto en la sesión de Clean Code
-*/
 
 const ALPHABET_LENGTH = 26;
-const LETTERS = {A: 65, Z: 90, a:97 ,z:122}
+const LETTERS = {ASCII_UPPER_A: 65, ASCII_UPPER_Z: 90, ASCII_LOWER_A:97 ,ASCII_LOWER_Z:122}
 
-function isUpperCaseLetterOutOfRange(char, shift){
-  return char >= LETTERS.A && char <= LETTERS.Z && (char + shift > LETTERS.Z||char -shift < LETTERS.A);
+function isUpperCaseLetterOutOfRange(code, shift){
+  return code >= LETTERS.ASCII_UPPER_A && code <= LETTERS.ASCII_UPPER_Z && (code + shift > LETTERS.ASCII_UPPER_Z||code -shift < LETTERS.ASCII_UPPER_A);
 }
 
-function isLowerCaseOutOfRange(char, shift){
-  return char >= LETTERS.a && char <= LETTERS.z && (char + shift > LETTERS.z||char-shift < LETTERS.a);
+function isLowerCaseOutOfRange(code, shift){
+  return code >= LETTERS.ASCII_LOWER_A && code <= LETTERS.ASCII_LOWER_Z && (code + shift > LETTERS.ASCII_LOWER_Z||code-shift < LETTERS.ASCII_LOWER_A);
 }
 
-function isOutOfAlphabet(char, shift){
-  return isUpperCaseLetterOutOfRange(char, shift) || isLowerCaseOutOfRange(char, shift);
+function isOutOfAlphabet(code, shift){
+  return isUpperCaseLetterOutOfRange(code, shift) || isLowerCaseOutOfRange(code, shift);
 }
 
+function normalizeShift(shift){
+  return shift % ALPHABET_LENGTH;
+}
+
+function shiftText(text, shift){
+  let result = '';
+  const normalizedShift = normalizeShift(shift);
+  for (let i = 0; i < text.length; i++){
+    let character = text[i]
+    result += shiftCharacter(character, normalizedShift);
+  }
+
+  return result;
+}
+
+function shiftCharacter(character, shift){
+  const code = character.charCodeAt(0);
+
+  const shiftToApply = isOutOfAlphabet(code, shift)?shift > 0 ? shift - ALPHABET_LENGTH:shift + ALPHABET_LENGTH: shift;
+  return String.fromCharCode(code + shiftToApply);
+}
 
 function cipher(text, shift) {
-    let cipher = '';
-    let newCharToAddToCipher, shiftToApply, currentChar;
-    shift = shift % ALPHABET_LENGTH;
-
-    for (let i = 0; i < text.length; i++) {
-      currentChar = text.charCodeAt(i);
-      shiftToApply = isOutOfAlphabet(currentChar, shift)?shift - ALPHABET_LENGTH:shift;
-      newCharToAddToCipher = String.fromCharCode(currentChar + shiftToApply);
-      cipher = cipher.concat(newCharToAddToCipher);
-    }
-    return cipher;
+  return shiftText(text, shift);
 }
   
-  function decipher(text, shift) {
-    var decipher = '';
-    let newCharToAddToDecipher, shiftToApply, currentChar;
-    shift = -shift % ALPHABET_LENGTH;
-    for (var i = 0; i < text.length; i++) {
-      currentChar = text.charCodeAt(i);
-      shiftToApply = isOutOfAlphabet(currentChar, shift)?shift + ALPHABET_LENGTH:shift;
-      newCharToAddToDecipher = String.fromCharCode(currentChar + shiftToApply);
-      decipher = decipher.concat(newCharToAddToDecipher);
-      
-    }
-    return decipher.toString();
-  }
-  
-  console.assert(
-    cipher('Hello World', 1) === 'Ifmmp!Xpsme',
-    `${cipher('Hello World', 1)} === 'Ifmmp!Xpsme'`,
-  );
-  console.assert(
-    decipher(cipher('Hello World', 3), 3) === 'Hello World',
-    `${decipher(cipher('Hello World', 3), 3)} === 'Hello World'`,
-  );
+function decipher(text, shift) {
+  return shiftText(text, -shift);
+}
+
+console.assert(
+  cipher('Hello World', 1) === 'Ifmmp!Xpsme',
+  `${cipher('Hello World', 1)} === 'Ifmmp!Xpsme'`,
+);
+console.assert(
+  decipher(cipher('Hello World', 3), 3) === 'Hello World',
+  `${decipher(cipher('Hello World', 3), 3)} === 'Hello World'`,
+);
