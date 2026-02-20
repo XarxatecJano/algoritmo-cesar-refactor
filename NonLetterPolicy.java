@@ -1,4 +1,4 @@
-public interface NonLetterPolicy {
+public interface INonLetterPolicy {
 
     char apply(char ch, int shift);
 
