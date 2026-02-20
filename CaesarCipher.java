@@ -28,6 +28,10 @@ public class CaesarCipher {
         return result.toString();
     }
     
+    private static int limitShift(int shift) {
+        return shift % ALPHABET_LENGTH;
+    }
+    
     public static String cipher(String text, int shift) {
         StringBuilder cipher = new StringBuilder();
         char newCharToAddToCipher;
