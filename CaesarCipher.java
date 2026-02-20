@@ -19,6 +19,15 @@ public class CaesarCipher {
             isOutOfRange(charCode, shift, Letters.A_LOWERCASE, Letters.Z_LOWERCASE);
     }
     
+    private static String shiftText(String text, int shift, int correction) {
+        StringBuilder result = new StringBuilder();
+        for (char charCode : text.toCharArray()) {
+            int shiftToApply = isOutOfAlphabet(charCode, shift) ? shift + correction : shift;
+            result.append((char) (charCode + shiftToApply));
+        }
+        return result.toString();
+    }
+    
     public static String cipher(String text, int shift) {
         StringBuilder cipher = new StringBuilder();
         char newCharToAddToCipher;
