@@ -31,38 +31,15 @@ public class CaesarCipher {
     private static int limitShift(int shift) {
         return shift % ALPHABET_LENGTH;
     }
-    
+
     public static String cipher(String text, int shift) {
-        StringBuilder cipher = new StringBuilder();
-        char newCharToAddToCipher;
-        int shiftToApply, currentChar;
-        shift = shift % ALPHABET_LENGTH;
-        
-        for (int i = 0; i < text.length(); i++) {
-            currentChar = (int) text.charAt(i);
-            shiftToApply = isOutOfAlphabet(currentChar, shift) ? 
-                          shift - ALPHABET_LENGTH : shift;
-            newCharToAddToCipher = (char) (currentChar + shiftToApply);
-            cipher.append(newCharToAddToCipher);
-        }
-        return cipher.toString();
+        return shiftText(text, limitShift(shift), -ALPHABET_LENGTH);
     }
     
     public static String decipher(String text, int shift) {
-        StringBuilder decipher = new StringBuilder();
-        char newCharToAddToDecipher;
-        int shiftToApply, currentChar;
-        shift = -shift % ALPHABET_LENGTH;
-        
-        for (int i = 0; i < text.length(); i++) {
-            currentChar = (int) text.charAt(i);
-            shiftToApply = isOutOfAlphabet(currentChar, shift) ? 
-                          shift + ALPHABET_LENGTH : shift;
-            newCharToAddToDecipher = (char) (currentChar + shiftToApply);
-            decipher.append(newCharToAddToDecipher);
-        }
-        return decipher.toString();
+        return shiftText(text, -limitShift(shift), ALPHABET_LENGTH);
     }
+
     
     public static void main(String[] args) {
         // Test 1
