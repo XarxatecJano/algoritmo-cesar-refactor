@@ -28,7 +28,7 @@ class CaesarCipher {
         willLowercaseLetterExceedAlphabetRange(charCode, shift: shift)
     }
     
-    static func transform(_ text: String, shift: Int) -> String {
+    private static func transform(_ text: String, shift: Int) -> String {
         var result = ""
         let shift = shift % alphabetLength
         
