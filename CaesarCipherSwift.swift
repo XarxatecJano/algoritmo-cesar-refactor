@@ -30,7 +30,7 @@ class CaesarCipher {
     
     static func transform(_ text: String, shift: Int) -> String {
         var result = ""
-        var shift = shift % alphabetLength
+        let shift = shift % alphabetLength
         
         for character in text {
             let currentChar = Int(character.unicodeScalars.first!.value)
