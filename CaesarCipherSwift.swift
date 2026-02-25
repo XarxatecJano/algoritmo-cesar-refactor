@@ -24,8 +24,8 @@ class CaesarCipher {
     }
     
     private static func willShiftExceedAlphabetRange(_ charCode: Int, shift: Int) -> Bool {
-        return isUpperCaseLetterOutOfRange(charCode, shift: shift) ||
-               isLowerCaseOutOfRange(charCode, shift: shift)
+        return willUppercaseLetterExceedAlphabetRange(charCode, shift: shift) ||
+        willLowercaseLetterExceedAlphabetRange(charCode, shift: shift)
     }
     
     static func transform(_ text: String, shift: Int) -> String {
