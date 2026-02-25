@@ -5,10 +5,10 @@ class CaesarCipher {
     private static let alphabetLength = 26
     
     private struct Letters {
-        static let A = 65
-        static let Z = 90
-        static let a = 97
-        static let z = 122
+        static let A = Int(Character("A").asciiValue!)
+        static let Z = Int(Character("Z").asciiValue!)
+        static let a = Int(Character("a").asciiValue!)
+        static let z = Int(Character("z").asciiValue!)
     }
     
     private static func isUpperCaseLetterOutOfRange(_ charCode: Int, shift: Int) -> Bool {
