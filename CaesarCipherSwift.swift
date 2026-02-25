@@ -11,13 +11,13 @@ class CaesarCipher {
         static let z = Int(Character("z").asciiValue!)
     }
     
-    private static func isUpperCaseLetterOutOfRange(_ charCode: Int, shift: Int) -> Bool {
+    private static func willUppercaseLetterExceedAlphabetRange(_ charCode: Int, shift: Int) -> Bool {
         return charCode >= Letters.A &&
                charCode <= Letters.Z &&
                (charCode + shift > Letters.Z || charCode - shift < Letters.A)
     }
     
-    private static func isLowerCaseOutOfRange(_ charCode: Int, shift: Int) -> Bool {
+    private static func willLowercaseLetterExceedAlphabetRange(_ charCode: Int, shift: Int) -> Bool {
         return charCode >= Letters.a &&
                charCode <= Letters.z &&
                (charCode + shift > Letters.z || charCode - shift < Letters.a)
