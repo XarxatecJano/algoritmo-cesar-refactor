@@ -28,14 +28,14 @@ class CaesarCipher {
                isLowerCaseOutOfRange(charCode, shift: shift)
     }
     
-    static func cipher(_ text: String, shift: Int) -> String {
+    static func transform(_ text: String, shift: Int) -> String {
         var result = ""
         var shift = shift % alphabetLength
         
         for character in text {
             let currentChar = Int(character.unicodeScalars.first!.value)
             
-            let shiftToApply = isOutOfAlphabet(currentChar, shift: shift)
+            let shiftToApply = willShiftExceedAlphabetRange(currentChar, shift: shift)
                 ? shift - alphabetLength
                 : shift
             
@@ -49,25 +49,12 @@ class CaesarCipher {
         return result
     }
     
+    static func cipher(_ text: String, shift: Int) -> String {
+        transform(text, shift: shift)
+    }
+    
     static func decipher(_ text: String, shift: Int) -> String {
-        var result = ""
-        var shift = -shift % alphabetLength
-        
-        for character in text {
-            let currentChar = Int(character.unicodeScalars.first!.value)
-            
-            let shiftToApply = isOutOfAlphabet(currentChar, shift: shift)
-                ? shift + alphabetLength
-                : shift
-            
-            let newCharCode = currentChar + shiftToApply
-            
-            if let scalar = UnicodeScalar(newCharCode) {
-                result.append(Character(scalar))
-            }
-        }
-        
-        return result
+        transform(text, shift: -shift)
     }
 }
 
