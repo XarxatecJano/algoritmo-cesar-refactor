@@ -32,8 +32,8 @@ public class CaesarCipher {
     private static String transform(String text, int shift) {
         StringBuilder transformedText = new StringBuilder(text.length());
 
-        for (int index = 0; index < text.length(); index++) {
-            char currentCharacter = text.charAt(index);
+        for (int i = 0; i < text.length(); i++) {
+            char currentCharacter = text.charAt(i);
             char transformedCharacter = shiftCharacter(currentCharacter, shift);
 
             transformedText.append(transformedCharacter);
