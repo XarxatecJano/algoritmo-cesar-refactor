@@ -33,6 +33,10 @@ y <code>decipher</code>. Con este cambio centralizo la política de ajuste del d
 De esta manera comunico mejor la intención de <code>isOutOfAlphabet</code> porque dejo claro que la comprobación
 del desplazamiento, no solo del carácter.
 
+### 8. Commits Posteriores.
+
+He realizado 1 commit posterior para correguir un nombre de variable sobredescriptivo y eliminar archivos innecesarios.
+
 # Resumen
 
 > He centrado la refactorización en eliminar duplicación, mejorar nombres, extraer responsabilidades a métodos
