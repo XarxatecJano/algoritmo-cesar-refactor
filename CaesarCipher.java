@@ -13,77 +13,122 @@ según lo visto en la sesión de Clean Code
 */
 
 public class CaesarCipher {
-    
-    private static final int ALPHABET_LENGTH = 26;
-    
-    private static class Letters {
-        static final int A = 65;
-        static final int Z = 90;
-        static final int a = 97;
-        static final int z = 122;
+    static final boolean SKIP_CHARS_OUT_OF_ALPHABET = false;
+    static final char FIRST_CHAR_UPPER = 'A';
+    static final char FIRST_CHAR_LOWER = 'a';
+    static final char LAST_CHAR_UPPER = 'Z';
+    static final char LAST_CHAR_LOWER = 'z';
+    static final char INVALID_CHAR = '\0';
+    static final int ALPHABET_LENGTH = 26;
+
+    private static boolean validString(String s){
+        if(s != null && !s.isBlank())
+            return true;
+        return false;
+    }
+
+    private static boolean inRange(int value, int rangeStart, int rangeEnd){
+        return value >= rangeStart && value <= rangeEnd;
+    }
+
+    private static boolean inLowercase(int letter){
+        return inRange(letter, FIRST_CHAR_LOWER, LAST_CHAR_LOWER);
+    }
+
+    private static boolean inUppercase(int letter){
+        return inRange(letter, FIRST_CHAR_UPPER, LAST_CHAR_UPPER);
     }
     
-    private static boolean isUpperCaseLetterOutOfRange(int charCode, int shift) {
-        return charCode >= Letters.A && charCode <= Letters.Z && 
-               (charCode + shift > Letters.Z || charCode - shift < Letters.A);
+    private static boolean inAlphabet(char letter){
+        int index = (int)letter;
+        return inUppercase(index) || inLowercase(index);
     }
-    
-    private static boolean isLowerCaseOutOfRange(int charCode, int shift) {
-        return charCode >= Letters.a && charCode <= Letters.z && 
-               (charCode + shift > Letters.z || charCode - shift < Letters.a);
+
+    private static int findRealModuleInt(int number, int divisor){
+        // Necesario porque la manera en que Java calcula el modulo 
+        // de numeros negativos no es igual a la "matematicamente correcta".
+        int result = number % divisor;
+        if (number < 0)
+            result += divisor;
+        return result;
     }
-    
-    private static boolean isOutOfAlphabet(int charCode, int shift) {
-        return isUpperCaseLetterOutOfRange(charCode, shift) || 
-               isLowerCaseOutOfRange(charCode, shift);
-    }
-    
-    public static String cipher(String text, int shift) {
-        StringBuilder cipher = new StringBuilder();
-        char newCharToAddToCipher;
-        int shiftToApply, currentChar;
-        shift = shift % ALPHABET_LENGTH;
-        
-        for (int i = 0; i < text.length(); i++) {
-            currentChar = (int) text.charAt(i);
-            shiftToApply = isOutOfAlphabet(currentChar, shift) ? 
-                          shift - ALPHABET_LENGTH : shift;
-            newCharToAddToCipher = (char) (currentChar + shiftToApply);
-            cipher.append(newCharToAddToCipher);
+
+    private static char cipherLetter(char letter, int shift){
+        char encodedChar = INVALID_CHAR;
+
+        if (inAlphabet(letter)){
+            int offset;
+            if (inUppercase(letter))
+                offset = FIRST_CHAR_UPPER;
+            else
+                offset = FIRST_CHAR_LOWER;
+
+            int index = letter - offset;
+            int indexAfterShift = findRealModuleInt((index + shift), ALPHABET_LENGTH);
+
+            encodedChar = (char)(indexAfterShift + offset);
         }
-        return cipher.toString();
-    }
-    
-    public static String decipher(String text, int shift) {
-        StringBuilder decipher = new StringBuilder();
-        char newCharToAddToDecipher;
-        int shiftToApply, currentChar;
-        shift = -shift % ALPHABET_LENGTH;
-        
-        for (int i = 0; i < text.length(); i++) {
-            currentChar = (int) text.charAt(i);
-            shiftToApply = isOutOfAlphabet(currentChar, shift) ? 
-                          shift + ALPHABET_LENGTH : shift;
-            newCharToAddToDecipher = (char) (currentChar + shiftToApply);
-            decipher.append(newCharToAddToDecipher);
+        else{
+            encodedChar = SKIP_CHARS_OUT_OF_ALPHABET ? letter : (char) (letter + shift);
         }
-        return decipher.toString();
+
+        return encodedChar;
+    }
+
+    public static String cipher(String message, int shift){
+        String result = null;
+        
+        if(validString(message)){
+            StringBuilder builder = new StringBuilder();
+            
+            for(int i = 0; i<message.length(); i++){
+                char nextLetter = message.charAt(i);
+                builder.append(cipherLetter(nextLetter, shift));
+            }
+            result = builder.toString();
+        }
+
+        return result;
+    }
+
+    public static String decipher(String message, int shift){
+        return cipher(message, shift * -1 );
     }
     
     public static void main(String[] args) {
+        
+        // He tocado los tests porque las assertions no funcionaban, pero
+        // pero la lógica esta intacta.
+
+        int testsPasados = 0;
+        int testRealizados = 0;
         // Test 1
         String result1 = cipher("Hello World", 1);
         String expected1 = "Ifmmp!Xpsme";
-        assert result1.equals(expected1) : 
-            String.format("%s === '%s'", result1, expected1);
-        
+        String eval1 = String.format("\n%s === '%s'", result1, expected1);
+        System.out.println(eval1);
+        if(result1.equals(expected1)){
+            System.out.println("Test 1: Pasado correctamente");
+            testsPasados++;
+        }
+        else
+            System.out.println("Test 1: Error");
+        testRealizados++;
+
         // Test 2
         String ciphered = cipher("Hello World", 3);
         String result2 = decipher(ciphered, 3);
         String expected2 = "Hello World";
-        assert result2.equals(expected2) : 
-            String.format("%s === '%s'", result2, expected2);
+        String eval2 = String.format("\n%s === '%s'", result2, expected2);
+        System.out.println(eval2);
+        if (result2.equals(expected2)){
+            System.out.println("Test 2: Pasado correctamente");
+            testsPasados++;
+        }
+        else
+            System.out.println("Test 2: Error");
+        testRealizados++;
         
-        System.out.println("Todos los tests han pasado correctamente");
+        System.out.println("\n%d/%d tests pasados correctamente\n".formatted(testsPasados, testRealizados));
     }
 }
