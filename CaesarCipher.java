@@ -17,37 +17,38 @@ public class CaesarCipher {
     private static final int ALPHABET_LENGTH = 26;
     
     private static class Letters {
-        static final int A = 65;
-        static final int Z = 90;
-        static final int a = 97;
-        static final int z = 122;
+        static final int A_UPPER_CASE = 65;
+        static final int Z_UPPER_CASE = 90;
+        static final int A_LOWER_CASE = 97;
+        static final int Z_LOWER_CASE = 122;
     }
-    
-    private static boolean isUpperCaseLetterOutOfRange(int charCode, int shift) {
-        return charCode >= Letters.A && charCode <= Letters.Z && 
-               (charCode + shift > Letters.Z || charCode - shift < Letters.A);
+
+    private static boolean isLetterInShiftRange(int charCode, int shift, int minRange, int maxRange) {
+        return (charCode >= minRange && charCode <= maxRange &&
+                (charCode + shift > maxRange || charCode - shift < minRange));
     }
-    
-    private static boolean isLowerCaseOutOfRange(int charCode, int shift) {
-        return charCode >= Letters.a && charCode <= Letters.z && 
-               (charCode + shift > Letters.z || charCode - shift < Letters.a);
+
+    private static boolean isLetterInAlphabet(int charCode, int shift) {
+        return (isLetterInShiftRange(charCode, shift, Letters.A_UPPER_CASE, Letters.Z_UPPER_CASE) ||
+                (isLetterInShiftRange(charCode, shift, Letters.A_LOWER_CASE, Letters.Z_LOWER_CASE)));
     }
-    
-    private static boolean isOutOfAlphabet(int charCode, int shift) {
-        return isUpperCaseLetterOutOfRange(charCode, shift) || 
-               isLowerCaseOutOfRange(charCode, shift);
+
+    private static int calculateShiftToApply(int charCode, int shift) {
+        return isLetterInAlphabet(charCode, shift) ?
+                shift - ALPHABET_LENGTH : shift;
     }
-    
+
     public static String cipher(String text, int shift) {
+        text = text.trim();
         StringBuilder cipher = new StringBuilder();
         char newCharToAddToCipher;
         int shiftToApply, currentChar;
         shift = shift % ALPHABET_LENGTH;
         
         for (int i = 0; i < text.length(); i++) {
+            System.out.println(i);
             currentChar = (int) text.charAt(i);
-            shiftToApply = isOutOfAlphabet(currentChar, shift) ? 
-                          shift - ALPHABET_LENGTH : shift;
+            shiftToApply = calculateShiftToApply(currentChar, shift);
             newCharToAddToCipher = (char) (currentChar + shiftToApply);
             cipher.append(newCharToAddToCipher);
         }
@@ -55,19 +56,8 @@ public class CaesarCipher {
     }
     
     public static String decipher(String text, int shift) {
-        StringBuilder decipher = new StringBuilder();
-        char newCharToAddToDecipher;
-        int shiftToApply, currentChar;
-        shift = -shift % ALPHABET_LENGTH;
-        
-        for (int i = 0; i < text.length(); i++) {
-            currentChar = (int) text.charAt(i);
-            shiftToApply = isOutOfAlphabet(currentChar, shift) ? 
-                          shift + ALPHABET_LENGTH : shift;
-            newCharToAddToDecipher = (char) (currentChar + shiftToApply);
-            decipher.append(newCharToAddToDecipher);
-        }
-        return decipher.toString();
+        shift = -shift;
+        return cipher(text, shift);
     }
     
     public static void main(String[] args) {
