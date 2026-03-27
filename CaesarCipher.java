@@ -12,78 +12,57 @@ Tu tarea consiste en entender el código y refactorizarlo para que sea lo más l
 según lo visto en la sesión de Clean Code
 */
 
+
+import java.util.stream.Collectors;
+
 public class CaesarCipher {
-    
+
     private static final int ALPHABET_LENGTH = 26;
-    
-    private static class Letters {
-        static final int A = 65;
-        static final int Z = 90;
-        static final int a = 97;
-        static final int z = 122;
+/**
+ * Aqui comprueba primero si era una letra en cuyo caso no hace falta hacer mas comprobaciones,
+ * luego comprueba que si era mayuscula o minuscula andes de cambiar siga siendolo despues de cambiar,
+ * por que si no me da un error al salirse del abecedario
+ * **/
+    private static boolean isOutOfAlphabet(char charCode, int shift) {
+         char result = (char) (charCode + shift);
+         if (!Character.isAlphabetic(charCode)) return false;
+         if (Character.isUpperCase(charCode) && !Character.isUpperCase(result)) return true;
+         if (Character.isLowerCase(charCode) && !Character.isLowerCase(result))return true;
+         return false;
     }
-    
-    private static boolean isUpperCaseLetterOutOfRange(int charCode, int shift) {
-        return charCode >= Letters.A && charCode <= Letters.Z && 
-               (charCode + shift > Letters.Z || charCode - shift < Letters.A);
-    }
-    
-    private static boolean isLowerCaseOutOfRange(int charCode, int shift) {
-        return charCode >= Letters.a && charCode <= Letters.z && 
-               (charCode + shift > Letters.z || charCode - shift < Letters.a);
-    }
-    
-    private static boolean isOutOfAlphabet(int charCode, int shift) {
-        return isUpperCaseLetterOutOfRange(charCode, shift) || 
-               isLowerCaseOutOfRange(charCode, shift);
-    }
-    
-    public static String cipher(String text, int shift) {
-        StringBuilder cipher = new StringBuilder();
-        char newCharToAddToCipher;
-        int shiftToApply, currentChar;
-        shift = shift % ALPHABET_LENGTH;
-        
-        for (int i = 0; i < text.length(); i++) {
-            currentChar = (int) text.charAt(i);
-            shiftToApply = isOutOfAlphabet(currentChar, shift) ? 
-                          shift - ALPHABET_LENGTH : shift;
-            newCharToAddToCipher = (char) (currentChar + shiftToApply);
-            cipher.append(newCharToAddToCipher);
-        }
-        return cipher.toString();
-    }
-    
     public static String decipher(String text, int shift) {
-        StringBuilder decipher = new StringBuilder();
-        char newCharToAddToDecipher;
-        int shiftToApply, currentChar;
-        shift = -shift % ALPHABET_LENGTH;
-        
-        for (int i = 0; i < text.length(); i++) {
-            currentChar = (int) text.charAt(i);
-            shiftToApply = isOutOfAlphabet(currentChar, shift) ? 
-                          shift + ALPHABET_LENGTH : shift;
-            newCharToAddToDecipher = (char) (currentChar + shiftToApply);
-            decipher.append(newCharToAddToDecipher);
-        }
-        return decipher.toString();
+        return cipher(text, -shift);
     }
-    
+    public static String cipher(String text, int shift) {
+        return cipherFunctional(text,shift);
+    }
+
+    private static int getShiftToApply(int shift, char currentChar) {
+        if (isOutOfAlphabet(currentChar, shift)) {
+            if (shift > 0) return shift - ALPHABET_LENGTH;
+            else return shift + ALPHABET_LENGTH;
+        }
+        return shift;
+    }
+    private static String cipherFunctional(String text, int shift){
+        final int normalShift = shift % ALPHABET_LENGTH;
+        return text.chars()
+                .map(c -> c + getShiftToApply(normalShift, (char)c))
+                .mapToObj(Character::toString)
+                .collect(Collectors.joining());
+    }
+
     public static void main(String[] args) {
         // Test 1
         String result1 = cipher("Hello World", 1);
         String expected1 = "Ifmmp!Xpsme";
-        assert result1.equals(expected1) : 
-            String.format("%s === '%s'", result1, expected1);
-        
+        assert result1.equals(expected1) : String.format("%s === '%s'", result1, expected1);
         // Test 2
         String ciphered = cipher("Hello World", 3);
         String result2 = decipher(ciphered, 3);
         String expected2 = "Hello World";
-        assert result2.equals(expected2) : 
-            String.format("%s === '%s'", result2, expected2);
-        
+        assert result2.equals(expected2) : String.format("%s === '%s'", result2, expected2);
+
         System.out.println("Todos los tests han pasado correctamente");
     }
 }

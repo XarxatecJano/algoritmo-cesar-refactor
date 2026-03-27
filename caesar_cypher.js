@@ -15,7 +15,7 @@ según lo visto en la sesión de Clean Code
 const ALPHABET_LENGTH = 26;
 const LETTERS = {A: 65, Z: 90, a:97 ,z:122}
 
-function isUpperCaseLetterOutOfRange(char, shift){
+function isUpperOutOfRange(char, shift){
   return char >= LETTERS.A && char <= LETTERS.Z && (char + shift > LETTERS.Z||char -shift < LETTERS.A);
 }
 
@@ -24,20 +24,20 @@ function isLowerCaseOutOfRange(char, shift){
 }
 
 function isOutOfAlphabet(char, shift){
-  return isUpperCaseLetterOutOfRange(char, shift) || isLowerCaseOutOfRange(char, shift);
+  return isUpperOutOfRange(char, shift) || isLowerCaseOutOfRange(char, shift);
 }
 
 
 function cipher(text, shift) {
     let cipher = '';
-    let newCharToAddToCipher, shiftToApply, currentChar;
+    let newChar, trueShift, currentChar;
     shift = shift % ALPHABET_LENGTH;
 
     for (let i = 0; i < text.length; i++) {
       currentChar = text.charCodeAt(i);
-      shiftToApply = isOutOfAlphabet(currentChar, shift)?shift - ALPHABET_LENGTH:shift;
-      newCharToAddToCipher = String.fromCharCode(currentChar + shiftToApply);
-      cipher = cipher.concat(newCharToAddToCipher);
+      trueShift = isOutOfAlphabet(currentChar, shift)?shift - ALPHABET_LENGTH:shift;
+      newChar = String.fromCharCode(currentChar + trueShift);
+      cipher = cipher.concat(newChar);
     }
     return cipher;
 }
