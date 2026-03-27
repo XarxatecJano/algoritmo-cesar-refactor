@@ -46,8 +46,7 @@ public class CaesarCipher {
         shift = shift % ALPHABET_LENGTH;
         
         for (int i = 0; i < text.length(); i++) {
-            System.out.println(i);
-            currentChar = (int) text.charAt(i);
+            currentChar = text.charAt(i);
             shiftToApply = calculateShiftToApply(currentChar, shift);
             newCharToAddToCipher = (char) (currentChar + shiftToApply);
             cipher.append(newCharToAddToCipher);
